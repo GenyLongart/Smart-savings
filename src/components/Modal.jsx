@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import CloseBtn from '../img/cerrar.svg'
-const Modal = ({setModal, animateModal, setAnimateModal}) => {
+import Message from './Message'
+
+const Modal = ({setModal, animateModal, setAnimateModal, registerSpending}) => {
+    const [message, setMessage] = useState('')
 
     const [name, setName] = useState('')
+    const [amount, setAmount] = useState('')
+    const [category, setCategory] = useState('')
+
 
     const hideModal = () => {
        
@@ -12,6 +18,22 @@ const Modal = ({setModal, animateModal, setAnimateModal}) => {
             setModal(false)
         }, 500);
     }
+
+    const handleSubmit = e => {
+        e.preventDefault()
+
+        if([name, amount, category].includes('')){
+            setMessage('Todos los campos son obligatorios')
+
+            setTimeout(() => {
+                setMessage('')
+            }, 2000);
+            return
+        }
+
+        registerSpending({name, amount, category})
+    }
+
   return (
     <div className='modal'>
         <div className='cerrar-modal'>
@@ -22,8 +44,13 @@ const Modal = ({setModal, animateModal, setAnimateModal}) => {
             />
         </div>
 
-        <form className={`formulario ${animateModal ? 'animar' : 'cerrar'}`}>
+        <form 
+        onSubmit={handleSubmit}
+        className={`formulario ${animateModal ? 'animar' : 'cerrar'}`}
+        >
             <legend>Nuevo Gasto</legend>
+
+            {message && <Message tipo= 'error'>{message}</Message>}
 
             <div className='campo'>
                 <label htmlFor='name'>Nombre Gasto</label>
@@ -42,6 +69,8 @@ const Modal = ({setModal, animateModal, setAnimateModal}) => {
                 id = 'amount'
                 type= 'number'
                 placeholder = 'Añade el monto de tu gasto'
+                value = {amount}
+                onChange = { e => setAmount(Number(e.target.value))}
                 />
             </div>
 
@@ -50,6 +79,8 @@ const Modal = ({setModal, animateModal, setAnimateModal}) => {
 
                 <select
                 id = 'categoria'
+                value = {category}
+                onChange = { e => setCategory(e.target.value)}
                 >
                     <option value = ''>--Seleccione--</option>
                     <option value = 'savings'>Ahorro</option>

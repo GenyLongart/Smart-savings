@@ -9,6 +9,7 @@ function App() {
   const [validBudget, setValidBudget] = useState(false)
   const [modal, setModal] = useState(false)
   const [animateModal, setAnimateModal] = useState(false)
+  const [spendings, setSpendings] = useState([])
 
   const handleNewSpending = () => {
     setModal(true)
@@ -20,6 +21,9 @@ function App() {
   }
 
   
+  const registerSpending = (spending) => {
+        console.log(spending)
+  }
 
   return (
     <div>
@@ -44,6 +48,7 @@ function App() {
                     setModal = {setModal}
                     animateModal = {animateModal}
                     setAnimateModal = {setAnimateModal}
+                    registerSpending = {registerSpending}
                     />}
       
     </div>
