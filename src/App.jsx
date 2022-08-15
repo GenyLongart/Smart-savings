@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import NewSpendingIcon from './img/nuevo-gasto.svg'
 import Modal from './components/Modal';
+import { generatingId } from './helpers';
+import SpendingsList from './components/SpendingsList';
 
 function App() {
   
@@ -11,8 +13,21 @@ function App() {
   const [animateModal, setAnimateModal] = useState(false)
   const [spendings, setSpendings] = useState([])
 
+  const [editSpending, setEditSpending] = useState({})
+
+  useEffect(() => {
+      if(Object.keys(editSpending).length > 0){
+        setModal(true)
+    
+        setTimeout(() => {
+          setAnimateModal(true)
+        }, 500);
+      }
+  }, [editSpending])
+
   const handleNewSpending = () => {
     setModal(true)
+    setEditSpending({})
 
     setTimeout(() => {
       setAnimateModal(true)
@@ -22,12 +37,28 @@ function App() {
 
   
   const registerSpending = (spending) => {
-        console.log(spending)
+    console.log(spending)
+    if(spending.id){
+      const actualizedSpendings = spendings.map( spendingState => spendingState.id === 
+        spending.id ? spending : spendingState)
+        setSpendings(actualizedSpendings)
+      //actualizar
+    } else {
+      spending.id = generatingId()
+      spending.date = Date.now()
+      setSpendings([...spendings, spending])
+      //nuevo gasto
+    }
+        setAnimateModal(false)
+        setTimeout(() => {
+            setModal(false)
+        }, 500);
   }
 
   return (
-    <div>
+    <div className={modal ? 'fijar' : ''}>
       <Header 
+      spendings = {spendings}
       budget = {budget}
       setBudget = {setBudget}
       validBudget = {validBudget}
@@ -35,6 +66,13 @@ function App() {
       />
 
       {validBudget && (
+        <>
+        <main>
+          <SpendingsList 
+            setEditSpending = {setEditSpending}
+            spendings = {spendings}
+          />
+        </main>
         <div className='nuevo-gasto'>
         <img 
         src = {NewSpendingIcon}
@@ -42,6 +80,7 @@ function App() {
         onClick={handleNewSpending}
         />
       </div>
+      </>
       )}
 
         { modal && <Modal 
@@ -49,6 +88,7 @@ function App() {
                     animateModal = {animateModal}
                     setAnimateModal = {setAnimateModal}
                     registerSpending = {registerSpending}
+                    editSpending = {editSpending}
                     />}
       
     </div>
