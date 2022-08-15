@@ -1,13 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CloseBtn from '../img/cerrar.svg'
 import Message from './Message'
 
-const Modal = ({setModal, animateModal, setAnimateModal, registerSpending}) => {
+const Modal = ({setModal, animateModal, setAnimateModal, registerSpending, editSpending}) => {
     const [message, setMessage] = useState('')
 
     const [name, setName] = useState('')
     const [amount, setAmount] = useState('')
     const [category, setCategory] = useState('')
+    const [id, setId] = useState('')
+    const [date, setDate] = useState('')
+
+    useEffect(() => {
+        if(Object.keys(editSpending).length > 0){
+           setName(editSpending.name)
+           setAmount(editSpending.amount)
+           setCategory(editSpending.category)
+           setId(editSpending.id)
+           setDate(editSpending.date)
+        }
+    }, [])
 
 
     const hideModal = () => {
@@ -31,7 +43,7 @@ const Modal = ({setModal, animateModal, setAnimateModal, registerSpending}) => {
             return
         }
 
-        registerSpending({name, amount, category})
+        registerSpending({name, amount, category, id, date})
     }
 
   return (
@@ -48,7 +60,7 @@ const Modal = ({setModal, animateModal, setAnimateModal, registerSpending}) => {
         onSubmit={handleSubmit}
         className={`formulario ${animateModal ? 'animar' : 'cerrar'}`}
         >
-            <legend>Nuevo Gasto</legend>
+            <legend>{editSpending.name ? 'Editar Gasto' : 'Nuevo Gasto'}</legend>
 
             {message && <Message tipo= 'error'>{message}</Message>}
 
@@ -75,28 +87,28 @@ const Modal = ({setModal, animateModal, setAnimateModal, registerSpending}) => {
             </div>
 
             <div className='campo'>
-                <label htmlFor='categoria'>Categoría</label>
+                <label htmlFor='category'>Categoría</label>
 
                 <select
-                id = 'categoria'
+                id = 'category'
                 value = {category}
                 onChange = { e => setCategory(e.target.value)}
                 >
                     <option value = ''>--Seleccione--</option>
-                    <option value = 'savings'>Ahorro</option>
-                    <option value = 'food'>Comida</option>
-                    <option value = 'house'>Casa</option>
-                    <option value = 'several'>Varios</option>
-                    <option value = 'leisure'>Ocio</option>
-                    <option value = 'health'>Salud</option>
-                    <option value = 'suscriptions'>Suscripciones</option>
+                    <option value = 'Ahorro'>Ahorro</option>
+                    <option value = 'Comida'>Comida</option>
+                    <option value = 'Casa'>Casa</option>
+                    <option value = 'Varios'>Varios</option>
+                    <option value = 'Ocio'>Ocio</option>
+                    <option value = 'Salud'>Salud</option>
+                    <option value = 'Suscripciones'>Suscripciones</option>
 
                 </select>  
             </div>
 
             <input 
                 type = 'submit'
-                value = 'Añadir Gasto'
+                value = {editSpending.name ? 'Guardar Cambios' : 'Añadir Gasto'}
             />
         </form>
     </div>
